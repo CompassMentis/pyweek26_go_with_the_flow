@@ -52,4 +52,4 @@ with open('river_system.txt') as input_file:
         pygame.display.flip()
 
         # vehicle.move()
-        pygame.image.save(screen, f'screenshot_{i}.png')
+        pygame.image.save(screen, f'images/background_{i}.png')

@@ -1,10 +1,28 @@
 import pygame
 
 
+class PowerTowers:
+    def __init__(self, screen):
+        self.towers = []
+        self.screen = screen
+
+    def add(self, x, y):
+        self.towers.append(PowerTower(self.screen, x, y))
+
+    def show(self):
+        for t in self.towers:
+            t.show()
+
+    def increase_charge(self):
+        for t in self.towers:
+            t.increase_charge()
+
+
 class PowerTower:
     STARTING_CHARGE = 0
     CHARGE_INCREASE = 0.1
     MAX_CHARGE = 100
+    charge_multiplier = 50  # One charge moves the car 50 forward
 
     def __init__(self, screen, x, y):
         self.x = x

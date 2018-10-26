@@ -3,6 +3,41 @@ import math
 from settings import settings
 
 
+class Vehicles:
+    def __init__(self, screen, points):
+        self.screen = screen
+        self.points = points
+        self.vehicles = []
+        self.current = None
+
+    def add(self, x, y):
+        self.current = Vehicle(self.screen, self.points, x, y)
+        self.vehicles.append(self.current)
+
+    def show(self):
+        for vehicle in self.vehicles:
+            vehicle.show()
+
+    def move(self):
+        for vehicle in self.vehicles:
+            vehicle.move()
+
+    def turn(self, direction):
+        self.current.turn(direction)
+
+    def faster(self):
+        self.current.faster()
+
+    def slower(self):
+        self.current.slower()
+
+    def stop(self):
+        self.current.stop()
+
+    def toggle_flow_mode(self):
+        self.current.toggle_flow_mode()
+
+
 class Vehicle:
     # The centre of the steering axle - the point around which the car should rotate
     pivot_point = (22, 40)
@@ -120,8 +155,8 @@ class Vehicle:
 
     def check_boundaries(self):
         # If car moved outside boundaries, put it back inside
-        self.x = min(max(0, self.x), settings.width - self.image.get_width())
-        self.y = min(max(0, self.y), settings.height - self.image.get_height())
+        self.x = min(max(5, self.x), settings.map_width - self.image.get_width())
+        self.y = min(max(5, self.y), settings.height - self.image.get_height())
 
     def steer_towards(self, new_direction):
         # Make sure both are >= 0, < 360
@@ -209,3 +244,10 @@ class Vehicle:
                 self.check_boundaries()
 
         self.orientate()
+
+    def charge_up(self, power_tower):
+        capacity = self.max_charge - self.charge
+        available = power_tower.charge * power_tower.charge_multiplier
+        transfer = min(capacity, available)
+        self.charge += transfer
+        power_tower.charge -= transfer // power_tower.charge_multiplier
