@@ -2,11 +2,19 @@ import pygame
 import math
 from settings import settings
 
+from queue import queue
+from sounds import sounds
+from draw_text import draw_text
+
 
 class Vehicles:
     def __init__(self, screen, points):
         self.screen = screen
         self.points = points
+        self.vehicles = []
+        self.current_id = None
+
+    def reset(self):
         self.vehicles = []
         self.current_id = None
 
@@ -30,6 +38,8 @@ class Vehicles:
         return self.current
 
     def show(self):
+        # Todo: Probably don't need to do this every time - but only when something actually retired
+        self.vehicles = [v for v in self.vehicles if not v.retired]
         for vehicle in self.vehicles:
             vehicle.show()
 
@@ -76,8 +86,12 @@ class Vehicle:
         self.flow_mode = False
         self.image_offset = None
         self.point = None
-        self.charge = 5000
+        self.charge = 1000
         self.active = False
+        self.retiring = False
+        self.retired = False
+        self.upstream_points = []
+        self.upstream_route = []
 
         self.orientate()
 
@@ -92,7 +106,7 @@ class Vehicle:
             else:
                 return self.image_ready_to_flow_empty
 
-        if self.charge:
+        if self.charge > 5:
             return self.image_driving
 
         return self.image_empty
@@ -102,14 +116,23 @@ class Vehicle:
 
         colour = (0, 0, 163, 127) if self.active else (127, 127, 127, 127)
 
-        pygame.draw.arc(
-            self.screen,
-            colour,
-            (self.x + self.image_offset[0], self.y + self.image_offset[1], 50, 50),
-            math.radians(0),
-            math.radians(359 * self.charge / self.max_charge),
-            5
-        )
+        if self.charge > 5:
+            pygame.draw.arc(
+                self.screen,
+                colour,
+                (self.x + self.image_offset[0], self.y + self.image_offset[1], 50, 50),
+                math.radians(0),
+                math.radians(359 * self.charge / self.max_charge),
+                5
+            )
+
+        for i, p in enumerate(self.upstream_points):
+            if self.upstream_route and p == self.upstream_route[0]:
+                colour = (255, 127, 127, 127)
+            else:
+                colour = (127, 255, 127, 127)
+            pygame.draw.circle(self.screen, colour, (p.x, p.y), 10)
+            draw_text.draw(self.screen, p.x - 7, p.y - 12, p.upstream_point_code)
 
     def orientate(self):
         """
@@ -171,6 +194,8 @@ class Vehicle:
             self.point = False
         self.flow_mode = not self.flow_mode
         self.orientate()
+        # self.speed = 0
+        self.upstream_route = []
 
     def check_boundaries(self):
         # If car moved outside boundaries, put it back inside
@@ -226,15 +251,62 @@ class Vehicle:
         #     self.direction = new_direction
         self.direction = (self.direction + angle) % 360
 
+    def set_upstream_points(self):
+        self.upstream_points = []
+        to_continue = [self.point]
+        visited = set()
+        while to_continue:
+            p = to_continue.pop()
+            while p is not None:
+                if len(p.previous) == 2:
+                    to_continue.append(p.previous[0])
+                    p = p.previous[1]
+                elif len(p.previous) == 1:
+                    p = p.previous[0]
+                else:
+                    self.upstream_points.append(p)
+                    p = None
+
+                visited.add(p)
+
+    def move_upstream_to(self, upstream_point):
+        self.upstream_route = []
+        p = upstream_point
+        end_point = self.points.points[(self.x, self.y)]
+        while p and p != end_point:
+            self.upstream_route.append(p)
+            p = p.next
+
     def move(self):
-        if self.point:
+        if self.upstream_route:
+            # Move upstream
+            self.charge -= 2
+            self.point = self.upstream_route.pop()
+            self.steer_towards(self.point.angle + 180)
+            self.x, self.y = self.point.x, self.point.y
+            if self.upstream_route:
+                self.set_upstream_points()
+            else:
+                self.point = None
+                self.speed = 0
+                self.flow_mode = False
+
+            self.orientate()
+
+        elif self.point:
+            # Move downstream
             self.point = self.point.next
             if self.point:
                 self.x, self.y = self.point.x, self.point.y
                 self.steer_towards(self.point.angle)
+                self.set_upstream_points()
             else:
                 self.flow_mode = False
+                self.charge = 0  # About to disappear
         else:
+            self.upstream_points = []
+            # Drive
+
             # One step at a time, see if we hit the points
             delta_x, delta_y = self.delta
 
@@ -256,11 +328,15 @@ class Vehicle:
 
                     self.check_boundaries()
 
-            elif self.charge:
+            elif self.charge > 0:
                 self.x += delta_x
                 self.y += delta_y
                 self.charge -= math.sqrt(delta_x ** 2 + delta_y ** 2)
                 self.check_boundaries()
+
+        if self.charge <= 0 and not self.retiring:
+            queue.add(200, 'retire_car', self)
+            self.retiring = True
 
         self.orientate()
 
@@ -270,3 +346,9 @@ class Vehicle:
         transfer = min(capacity, available)
         self.charge += transfer
         power_tower.charge -= transfer // power_tower.charge_multiplier
+
+        return transfer
+
+    def retire(self):
+        self.retired = True
+        sounds.play('retire_car')

@@ -6,6 +6,9 @@ class PowerTowers:
         self.towers = []
         self.screen = screen
 
+    def reset(self):
+        self.towers = []
+
     def add(self, x, y):
         self.towers.append(PowerTower(self.screen, x, y))
 

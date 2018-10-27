@@ -1,0 +1,55 @@
+[level: 1]
+
+    [hotels]
+    green_hotel, 1013, 187
+    old_hotel, 1275, 296
+
+    [power_towers]
+    874, 174
+    333, 370
+
+    [vehicles]
+    red, 100, 100
+    blue, 100, 150
+    yellow, 100, 200
+
+    [destinations]
+    totem, 146, 107
+    mountain, 335, 470
+    deer, 527, 682
+    hut, 1056, 632
+    stone_circle, 1116, 551
+
+    [travellers]
+    traveller01, green_hotel, hut
+    traveller02, old_hotel, stone_circle
+    traveller03, green_hotel, totem
+    traveller04, green_hotel, deer > mountain
+
+[level: 2]
+
+    [hotels]
+    green_hotel, 1013, 187
+    old_hotel, 1275, 296
+
+    [power_towers]
+    874, 174
+    333, 370
+
+    [vehicles]
+    red, 100, 100
+    blue, 100, 150
+    yellow', 100, 200
+
+    [destinations]
+    totem, 146, 107
+    mountain, 335, 470
+    deer, 527, 682
+    hut, 1056, 632
+    stone_circle
+
+    [travellers]
+    traveller01, green_hotel, hut
+    traveller02, old_hotel, stone_circle
+    traveller03, green_hotel, totem
+    traveller04, green_hotel, deer > mountain

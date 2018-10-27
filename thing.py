@@ -62,6 +62,9 @@ class Things:
         self.things = []
         self.screen = screen
 
+    def reset(self):
+        self.things = []
+
     def add(self, name, x, y):
         thing = self.things_class(self.screen, name, x, y)
         self.things.append(thing)

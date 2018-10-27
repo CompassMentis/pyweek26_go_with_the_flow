@@ -1,3 +1,5 @@
+from sounds import sounds
+
 def image_collision(image_a, location_a, image_b, location_b):
     rect_a = image_a.get_rect().move(location_a)
     rect_b = image_b.get_rect().move(location_b)
@@ -48,7 +50,8 @@ class Map:
                         vehicle.image, (vehicle.x, vehicle.y),
                         power_tower.image_medium, (power_tower.x, power_tower.y)
                 ):
-                    vehicle.charge_up(power_tower)
+                    if vehicle.charge_up(power_tower) > 10:
+                        sounds.play('charge_up')
 
             # Vehicles with passengers waiting outside a hotel
             passenger = self.vehicle_passenger(vehicle)
@@ -59,6 +62,7 @@ class Map:
                             vehicle.image, (vehicle.x, vehicle.y)
                         ):
                             traveller.location = vehicle
+                            sounds.play('passenger_collected')
 
             elif not passenger.done:
                 yet_to_visit = passenger.yet_to_visit
@@ -69,6 +73,7 @@ class Map:
                             vehicle.image, (vehicle.x, vehicle.y)
                     ):
                         passenger.visited.append(destination)
+                        sounds.play('arrived')
 
                 # Passenger which has visited everything, collision with their hotel
                 if not yet_to_visit:
@@ -77,3 +82,4 @@ class Map:
                             vehicle.image, (vehicle.x, vehicle.y)
                     ):
                         passenger.location = passenger.hotel
+                        sounds.play('traveller_done')

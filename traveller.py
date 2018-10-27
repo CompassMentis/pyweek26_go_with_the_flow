@@ -28,10 +28,6 @@ class Traveller(Thing):
     def yet_to_visit(self):
         return [d for d in self.plan if d not in self.visited]
 
-    # @property
-    # def image_desaturated(self):
-    #     return desaturate(self.image)
-    #
     def show(self):
         self.screen.blit(
             self.image_desaturated if self.done else self.image,
@@ -50,6 +46,10 @@ class Travellers(Things):
 
     def show(self):
         for i, traveller in enumerate(self.things):
+            if type(traveller.location) == Vehicle and traveller.location.retired:
+                traveller.location = traveller.hotel
+                traveller.visited = []
+
             traveller.x = self.plan_x
             traveller.y = self.plan_y + i * self.plan_row_height
             traveller.show()

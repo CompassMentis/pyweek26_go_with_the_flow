@@ -12,6 +12,8 @@ class Point:
         self.end_point = False
         self.distance_to_end = d
         self.angle = angle
+        self.previous = []
+        self.upstream_point_code = None
 
     def __repr__(self):
         return f'{self.x}, {self.y}'
@@ -34,6 +36,7 @@ class Points:
         self.current = None
         self.start_points = []
         self.end_points = []
+        self.upstream_points = []
 
     def add_point(self, x, y, d=None, angle=None):
         # Point already exists, so don't create another one
@@ -111,6 +114,26 @@ class Points:
         for point, next_location in next_points.items():
             point.next = self.points[next_location]
 
+        self.set_upstream_routes()
+
+    def set_upstream_routes(self):
+        # Travel down from each end point to the start
+        # at each point, add a pointer from the next point back to itself
+        for point in self.start_points:
+            p = point
+            while p.next:
+                if p not in p.next.previous:
+                    p.next.previous.append(p)
+                p = p.next
+
+        # Make a list of all the points with no previous points - i.e. the upstream route end points
+        for point in self.start_points:
+            if not point.previous:
+                self.upstream_points.append(point)
+
+        for i, point in enumerate(self.upstream_points):
+            point.upstream_point_code = 'ABCDEFGHJKLMNOPQRSTUVWXYZ23456789£$%^&*()'[i]
+
     def list_segments(self):
         for point in self.start_points:
             p = point
@@ -121,3 +144,4 @@ class Points:
     def calculate_distances_to_end(self):
         for p in self.points.values():
             p.calculate_distance_to_end()
+
