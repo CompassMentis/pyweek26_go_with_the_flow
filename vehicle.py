@@ -8,11 +8,26 @@ class Vehicles:
         self.screen = screen
         self.points = points
         self.vehicles = []
-        self.current = None
+        self.current_id = None
 
-    def add(self, x, y):
-        self.current = Vehicle(self.screen, self.points, x, y)
-        self.vehicles.append(self.current)
+    def add(self, colour, x, y):
+        vehicle = Vehicle(self.screen, self.points, colour, x, y)
+        self.vehicles.append(vehicle)
+        self.current_id = 0
+        self.vehicles[0].active = True
+        return vehicle
+
+    @property
+    def current(self):
+        return self.vehicles[self.current_id]
+
+    def next(self):
+        self.current_id += 1
+        if self.current_id >= len(self.vehicles):
+            self.current_id = 0
+        for i, vehicle in enumerate(self.vehicles):
+            vehicle.active = (i == self.current_id)
+        return self.current
 
     def show(self):
         for vehicle in self.vehicles:
@@ -44,23 +59,25 @@ class Vehicle:
     max_rotation = 1
     max_charge = 5000
 
-    def __init__(self, screen, points, x, y):
+    def __init__(self, screen, points, colour, x, y):
         self.x, self.y = x, y
         self.screen = screen
         self.points = points
         self.direction = 90
-        self.speed = 2
-        self.delta = 2, 2
-        self.image_ready_to_flow = pygame.image.load('images/vehicle_ready_to_flow.png')
-        self.image_ready_to_flow_empty = pygame.image.load('images/vehicle_ready_to_flow_empty.png')
-        self.image_flowing = pygame.image.load('images/vehicle_flowing.png')
-        self.image_driving = pygame.image.load('images/vehicle_driving.png')
-        self.image_empty = pygame.image.load('images/vehicle_empty.png')
+        self.speed = 0
+        self.delta = 0, 0
+        self.colour_name = colour
+        self.image_ready_to_flow = pygame.image.load(f'images/vehicle_{colour}/vehicle_ready_to_flow.png')
+        self.image_ready_to_flow_empty = pygame.image.load(f'images/vehicle_{colour}/vehicle_ready_to_flow_empty.png')
+        self.image_flowing = pygame.image.load(f'images/vehicle_{colour}/vehicle_flowing.png')
+        self.image_driving = pygame.image.load(f'images/vehicle_{colour}/vehicle_driving.png')
+        self.image_empty = pygame.image.load(f'images/vehicle_{colour}/vehicle_empty.png')
         self.image = None
         self.flow_mode = False
         self.image_offset = None
         self.point = None
         self.charge = 5000
+        self.active = False
 
         self.orientate()
 
@@ -83,9 +100,11 @@ class Vehicle:
     def show(self):
         self.screen.blit(self.image, (self.x + self.image_offset[0], self.y + self.image_offset[1]))
 
+        colour = (0, 0, 163, 127) if self.active else (127, 127, 127, 127)
+
         pygame.draw.arc(
             self.screen,
-            (0, 0, 163, 127),
+            colour,
             (self.x + self.image_offset[0], self.y + self.image_offset[1], 50, 50),
             math.radians(0),
             math.radians(359 * self.charge / self.max_charge),
