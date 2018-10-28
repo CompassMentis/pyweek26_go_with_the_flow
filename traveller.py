@@ -1,12 +1,13 @@
+import os
+
 import pygame
 
 from thing import Thing, Things
-# from thing import desaturate
 from vehicle import Vehicle
 
 
 class Traveller(Thing):
-    folder = 'images/travellers'
+    folder = os.path.join('images', 'travellers')
 
     def __init__(self, screen, name, x, y):
         super().__init__(screen, name, x, y)
@@ -37,9 +38,9 @@ class Traveller(Thing):
 
 class Travellers(Things):
     plan_x = 1375
-    plan_y = 10
+    plan_y = 97
     plan_row_height = 48
-    plan_column_width = 35
+    plan_column_width = 38
     plan_width = 150
     plan_hotel_x = 1530
     things_class = Traveller
@@ -63,7 +64,7 @@ class Travellers(Things):
 
             # Show destinations - desaturate if already visited
             for j, destination in enumerate(traveller.plan):
-                x = self.plan_x + (j + 1) * self.plan_column_width
+                x = self.plan_x + (j + 1) * self.plan_column_width - 10
                 self.screen.blit(
                     destination.plan_image_desaturated if destination in traveller.visited else destination.plan_image,
                     (x, traveller.y)

@@ -32,7 +32,7 @@ class Levels:
                 elif line.strip():
                     level.data[mode].append(line.strip())
 
-    def switch(self, name, power_towers, vehicles, destinations, hotels, travellers):
+    def switch(self, name, power_towers, vehicles, destinations, hotels, travellers, flash):
         level = self.levels[name]
 
         power_towers.reset()
@@ -72,3 +72,10 @@ class Levels:
             traveller.hotel = hotels_idx[hotel]
             traveller.location = hotels_idx[hotel]
             traveller.plan = [destinations_idx[p] for p in plan]
+
+        if level.data['help']:
+            line = level.data['help'][0].strip()
+            flash.start(line)
+
+    def all_done(self, level):
+        return level not in self.levels

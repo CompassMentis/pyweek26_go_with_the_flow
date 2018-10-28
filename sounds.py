@@ -1,3 +1,5 @@
+import os
+
 import pygame
 
 pygame.mixer.pre_init(44100, 16, 2, 4096)
@@ -17,7 +19,7 @@ class Sounds:
                 retire_car='boss-shoot.wav',
             )[name]
 
-            self.sounds[name] = pygame.mixer.Sound(f'sounds/{filename}')
+            self.sounds[name] = pygame.mixer.Sound(os.path.join('sounds', filename))
         self.sounds[name].play()
 
 

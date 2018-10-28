@@ -1,4 +1,26 @@
 [level: 1]
+    [help]
+    Pick up a traveller, take her to her destination, then back to her hotel
+
+    [hotels]
+    green_hotel, 1013, 187
+
+    [power_towers]
+    874, 174
+    333, 370
+
+    [vehicles]
+    red, 100, 100
+
+    [destinations]
+    hut, 1056, 632
+
+    [travellers]
+    traveller01, green_hotel, hut
+
+[level: 2]
+    [help]
+    Use the Space Bar to enter the river and flow downstream. Tab key to switch cars
 
     [hotels]
     green_hotel, 1013, 187
@@ -7,6 +29,33 @@
     [power_towers]
     874, 174
     333, 370
+
+    [vehicles]
+    red, 100, 100
+    blue, 100, 150
+
+    [destinations]
+    mountain, 335, 470
+    deer, 527, 682
+    hut, 1056, 632
+    stone_circle, 1116, 551
+
+    [travellers]
+    traveller01, green_hotel, hut
+    traveller02, old_hotel, stone_circle
+    traveller04, green_hotel, deer > mountain
+
+[level: 3]
+    [help]
+    Enter the river. Hit e.g. ‘F’ (see green circles) to steer upstream to source ‘F’
+
+    [hotels]
+    green_hotel, 1275, 297
+    old_hotel, 876, 141
+
+    [power_towers]
+    893, 38
+    622, 546
 
     [vehicles]
     red, 100, 100
@@ -26,30 +75,39 @@
     traveller03, green_hotel, totem
     traveller04, green_hotel, deer > mountain
 
-[level: 2]
+[level: 4]
+    [help]
+    Try using multiple cars to complete the level faster. Floating downstream does not use power
 
     [hotels]
-    green_hotel, 1013, 187
-    old_hotel, 1275, 296
+    green_hotel, 1280, 252
+    old_hotel, 757, 169
 
     [power_towers]
-    874, 174
-    333, 370
+    874, 121
+    302, 380
 
     [vehicles]
     red, 100, 100
     blue, 100, 150
-    yellow', 100, 200
+    yellow, 100, 200
 
     [destinations]
-    totem, 146, 107
-    mountain, 335, 470
-    deer, 527, 682
-    hut, 1056, 632
-    stone_circle
+    totem, 139, 106
+    fortress, 415, 170
+    spider, 541, 337
+    mountain, 157, 549
+    well, 630, 526
+    deer, 532, 699
+    cactus, 743, 401
+    hut, 1058, 632
+    stone_circle, 1126, 519
+    huts, 958, 783
+    monastry, 991, 343
 
     [travellers]
-    traveller01, green_hotel, hut
-    traveller02, old_hotel, stone_circle
-    traveller03, green_hotel, totem
-    traveller04, green_hotel, deer > mountain
+    traveller01, green_hotel, totem > fortress
+    traveller02, old_hotel, spider > mountain
+    traveller03, green_hotel, well > huts
+    traveller04, green_hotel, deer > hut > monastry
+    traveller05, old_hotel, stone_circle > cactus

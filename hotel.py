@@ -1,8 +1,10 @@
+import os
+
 from thing import Things, Thing
 
 
 class Hotel(Thing):
-    folder = 'images/hotels'
+    folder = os.path.join('images', 'hotels')
 
 
 class Hotels(Things):

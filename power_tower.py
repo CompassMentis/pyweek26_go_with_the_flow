@@ -1,3 +1,4 @@
+import os
 import pygame
 
 
@@ -33,11 +34,11 @@ class PowerTower:
         self.charge = self.STARTING_CHARGE
         self.screen = screen
 
-        self.image_low = pygame.image.load('images/power_tower_low.png')
-        self.image_medium = pygame.image.load('images/power_tower_medium.png')
-        self.image_high = pygame.image.load('images/power_tower_high.png')
+        self.image_low = pygame.image.load(os.path.join('images', 'power_tower_low.png'))
+        self.image_medium = pygame.image.load(os.path.join('images', 'power_tower_medium.png'))
+        self.image_high = pygame.image.load(os.path.join('images', 'power_tower_high.png'))
 
-        self.image_ring = pygame.image.load('images/power_tower_ring.png')
+        self.image_ring = pygame.image.load(os.path.join('images', 'power_tower_ring.png'))
 
     def increase_charge(self):
         self.charge = min(self.charge + self.CHARGE_INCREASE, self.MAX_CHARGE)

@@ -1,4 +1,5 @@
 import sys
+import os
 import pygame
 
 from settings import settings
@@ -11,9 +12,18 @@ from hotel import Hotels
 from traveller import Travellers
 from timer import Timer
 from levels import Levels
+from flash import Flash
 
 # To do: Don't use singletons?
 from queue import queue
+
+
+def level_done(travellers):
+    for traveller in travellers.things:
+        if not traveller.done:
+            return False
+    return True
+
 
 pygame.init()
 
@@ -23,7 +33,7 @@ screen = pygame.display.set_mode(settings.size)
 
 backgrounds = dict()
 for i in range(4):
-    backgrounds[i] = pygame.image.load(f'images/background_{i}.png')
+    backgrounds[i] = pygame.image.load(os.path.join('images', f'background_{i}.png'))
 
 points = Points()
 with open('river_system.txt') as input_file:
@@ -32,49 +42,11 @@ with open('river_system.txt') as input_file:
 levels = Levels('levels.txt')
 
 power_towers = PowerTowers(screen)
-# power_towers.add(874, 174)
-# power_towers.add(333, 370)
-
 vehicles = Vehicles(screen, points)
-# vehicles.add('red', 100, 100)
-# vehicles.add('blue', 100, 150)
-# vehicles.add('yellow', 100, 200)
-
 destinations = Destinations(screen)
-# totem = destinations.add('totem', 146, 107)
-# mountain = destinations.add('mountain', 335, 470)
-# deer = destinations.add('deer', 527, 682)
-# hut = destinations.add('hut', 1056, 632)
-# stone_circle = destinations.add('stone_circle', 1116, 551)
-
 hotels = Hotels(screen)
-# green_hotel = hotels.add('green_hotel', 1013, 187)
-# old_hotel = hotels.add('old_hotel', 1275, 296)
-
 travellers = Travellers(screen)
-
-# traveller01 = travellers.add('traveller01', 0, 0)
-# traveller01.hotel = green_hotel
-# traveller01.location = green_hotel
-# traveller01.plan = [hut]
-#
-# traveller02 = travellers.add('traveller02', 0, 0)
-# traveller02.hotel = old_hotel
-# traveller02.location = old_hotel
-# traveller02.plan = [stone_circle]
-#
-# traveller03 = travellers.add('traveller03', 0, 0)
-# traveller03.hotel = green_hotel
-# traveller03.location = green_hotel
-# traveller03.plan = [totem]
-#
-# traveller04 = travellers.add('traveller04', 0, 0)
-# traveller04.hotel = green_hotel
-# traveller04.location = green_hotel
-# traveller04.plan = [deer, mountain]
-
-def level_done():
-    pass
+flash = Flash(screen)
 
 map = Map(
     screen=screen,
@@ -89,18 +61,30 @@ timer = Timer(screen)
 level = 0
 
 background_index = 0
-while 1:
+done = False
+while not done:
 
-    if not level or level_done():
+    if not level or level_done(travellers):
         level += 1
+        if levels.all_done(level):
+            done = True
+            break
+
+        timer.next_level()
+
         levels.switch(
             level,
             power_towers=power_towers,
             vehicles=vehicles,
             destinations=destinations,
             hotels=hotels,
-            travellers=travellers
+            travellers=travellers,
+            flash=flash,
         )
+
+    if vehicles.all_gone:
+        done = True
+        break
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
@@ -146,6 +130,7 @@ while 1:
     travellers.show()
     map.show()
     timer.show()
+    flash.show()
 
     vehicles.show()
 
@@ -155,3 +140,20 @@ while 1:
     power_towers.increase_charge()
     map.process_collisions()
     queue.tick()
+
+overlay_name = 'success_overlay' if levels.all_done(level) else 'game_over_overlay'
+overlay = pygame.image.load(os.path.join('images', f'{overlay_name}.png'))
+
+screen.blit(overlay, (0, 0))
+pygame.display.flip()
+
+# Wait for the space bar
+done = False
+while not done:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            done = True
+
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                done = True

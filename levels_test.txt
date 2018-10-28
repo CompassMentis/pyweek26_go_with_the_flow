@@ -1,0 +1,36 @@
+[level: 1]
+    [help]
+    Try using multiple cars to complete the level faster
+
+    [hotels]
+    green_hotel, 1280, 252
+    old_hotel, 757, 169
+
+    [power_towers]
+    874, 121
+    302, 380
+
+    [vehicles]
+    red, 100, 100
+    blue, 100, 150
+    yellow, 100, 200
+
+    [destinations]
+    totem, 139, 106
+    fortress, 415, 170
+    spider, 541, 337
+    mountain, 157, 549
+    well, 630, 526
+    deer, 532, 699
+    cactus, 743, 401
+    hut, 1058, 632
+    stone_circle, 1126, 519
+    huts, 958, 783
+    monastry, 991, 343
+
+    [travellers]
+    traveller01, green_hotel, totem > fortress
+    traveller02, old_hotel, spider > mountain
+    traveller03, green_hotel, well > huts
+    traveller04, green_hotel, deer > hut > monastry
+    traveller05, old_hotel, stone_circle > cactus

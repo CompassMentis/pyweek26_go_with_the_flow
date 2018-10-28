@@ -1,3 +1,4 @@
+import os
 import imageio
 import math
 
@@ -69,7 +70,7 @@ def calculate_angles_for_segment(start_point):
         segment_points[i].angle = calculate_angle(segment_points[i - ANGLE_POINTS_DELTA], segment_points[i + ANGLE_POINTS_DELTA])
 
 
-image = imageio.imread('images/river_system.png')
+image = imageio.imread(os.path.join('images', 'river_system.png'))
 
 # Todo: Use numpy functionality to speed this up
 start_points = []

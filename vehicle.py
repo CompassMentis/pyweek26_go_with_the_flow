@@ -1,10 +1,12 @@
-import pygame
+import os
 import math
-from settings import settings
+
+import pygame
 
 from queue import queue
 from sounds import sounds
 from draw_text import draw_text
+from settings import settings
 
 
 class Vehicles:
@@ -17,6 +19,13 @@ class Vehicles:
     def reset(self):
         self.vehicles = []
         self.current_id = None
+
+    @property
+    def all_gone(self):
+        for vehicle in self.vehicles:
+            if not vehicle.retired:
+                return False
+        return True
 
     def add(self, colour, x, y):
         vehicle = Vehicle(self.screen, self.points, colour, x, y)
@@ -39,7 +48,17 @@ class Vehicles:
 
     def show(self):
         # Todo: Probably don't need to do this every time - but only when something actually retired
+        current = self.vehicles[self.current_id]
         self.vehicles = [v for v in self.vehicles if not v.retired]
+
+        if not self.vehicles:
+            return
+
+        self.current_id = 0
+        for i, v in enumerate(self.vehicles):
+            if v == current:
+                self.current_id = i
+
         for vehicle in self.vehicles:
             vehicle.show()
 
@@ -77,11 +96,12 @@ class Vehicle:
         self.speed = 0
         self.delta = 0, 0
         self.colour_name = colour
-        self.image_ready_to_flow = pygame.image.load(f'images/vehicle_{colour}/vehicle_ready_to_flow.png')
-        self.image_ready_to_flow_empty = pygame.image.load(f'images/vehicle_{colour}/vehicle_ready_to_flow_empty.png')
-        self.image_flowing = pygame.image.load(f'images/vehicle_{colour}/vehicle_flowing.png')
-        self.image_driving = pygame.image.load(f'images/vehicle_{colour}/vehicle_driving.png')
-        self.image_empty = pygame.image.load(f'images/vehicle_{colour}/vehicle_empty.png')
+        self.image_ready_to_flow = pygame.image.load(os.path.join('images', f'vehicle_{colour}', 'vehicle_ready_to_flow.png'))
+        self.image_ready_to_flow_empty = pygame.image.load(os.path.join('images', f'vehicle_{colour}', 'vehicle_ready_to_flow_empty.png'))
+        self.image_flowing = pygame.image.load(os.path.join('images', f'vehicle_{colour}', 'vehicle_flowing.png'))
+        self.image_driving = pygame.image.load(os.path.join('images', f'vehicle_{colour}', 'vehicle_driving.png'))
+        self.image_empty = pygame.image.load(os.path.join('images', f'vehicle_{colour}', 'vehicle_ready_to_flow_empty.png'))
+
         self.image = None
         self.flow_mode = False
         self.image_offset = None

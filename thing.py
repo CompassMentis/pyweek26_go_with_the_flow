@@ -1,3 +1,4 @@
+import os
 import pygame
 
 
@@ -24,7 +25,7 @@ class Thing:
         self.name = name
         self.x = x
         self.y = y
-        self.image = pygame.image.load(f'{self.folder}/{self.name}{self.extension}')
+        self.image = pygame.image.load(os.path.join(f'{self.folder}', f'{self.name}{self.extension}'))
         self._plan_image = None
         self._plan_image_desaturated = None
         self._image_desaturated = None
